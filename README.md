@@ -4,3 +4,4 @@ The orginal repository is listed here: [ChatTraffic Repository](https://github.c
 
 If you get an error about PyTorch lightning try this: ``` pip install packaging==20.9 torchmetrics==0.6.0 ``` 
 
+This to fix the diffusion model error: ``` pip install "kornia<0.7" ```
