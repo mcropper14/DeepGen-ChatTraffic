@@ -1,6 +1,19 @@
+# Flow Matching training config for ChatTraffic.
+#
+# Identical to traffic.yaml except:
+#   - model.target  → LatentFlowMatching  (changes the loss to flow matching)
+#   - model.params.fm_method → "midpoint" (ODE integration method at inference)
+#
+# Training:
+#   python main.py --base configs/latent-diffusion/traffic_fm.yaml -t --gpus 0,
+#
+# Resuming:
+#   python main.py --base configs/latent-diffusion/traffic_fm.yaml \
+#       -t --gpus 0, -r logs/<run_dir>/checkpoints/last.ckpt
+
 model:
   base_learning_rate: 1.0e-05
-  target: ldm.models.diffusion.ddpm.LatentDiffusion
+  target: ldm.models.diffusion.flow_matching.LatentFlowMatching
   params:
     linear_start: 0.00085
     linear_end: 0.012
@@ -16,7 +29,13 @@ model:
     monitor: val/loss_simple_ema
     # scale_factor: 0.18215
     scale_factor: 1
+    scale_by_std: True
     use_ema: False
+
+    # Flow matching specific: ODE integration method used in sample_log
+    # and during inference when --sampler flow is passed to chattraffic.py.
+    # "midpoint" gives better quality than "euler" at the same step count.
+    fm_method: "midpoint"
 
     unet_config:
       target: ldm.modules.diffusionmodules.openaimodel.UNetModel
@@ -46,7 +65,7 @@ model:
       params:
         embed_dim: 3
         monitor: val/rec_loss
-        ckpt_path: "" #autoencoder.ckpt
+        ckpt_path: ""
         ddconfig:
           double_z: true
           z_channels: 3
@@ -61,7 +80,7 @@ model:
           dropout: 0.0
         lossconfig:
           target: torch.nn.Identity
-      
+
     cond_stage_config:
       target: ldm.modules.encoders.modules.BERTEmbedder
       params:
@@ -85,7 +104,7 @@ data:
         size: 36
         data_root: datasets/traffic
         txt_file: datasets/traffic/validation.txt
-  
+
 lightning:
   callbacks:
     image_logger:
@@ -94,9 +113,6 @@ lightning:
         batch_frequency: 1000
         max_images: 32
         increase_log_steps: True
-        
+
   trainer:
     benchmark: True
-
-
-    
