@@ -9,3 +9,6 @@ This to fix the diffusion model error: ``` pip install "kornia<0.7" ```
 Data set: [chatTraffic](https://drive.google.com/file/d/1uTLiB5-WnfX46PizrnQ8diUCZScZQuSl/view?usp=sharing)
 
 Training plots (so far) [plots](https://drive.google.com/drive/u/1/folders/1gdQa4xsLskdbwLzw-eEMvRDNMisXal8U) 
+
+Sample outputs (so far) [samples] (https://drive.google.com/drive/folders/187_QWBnjrfnl_LaRfgcETFuvWPyGMO6S?usp=drive_link)
+the output is an interactive map 
