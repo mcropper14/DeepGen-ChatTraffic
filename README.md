@@ -10,5 +10,5 @@ Data set: [chatTraffic](https://drive.google.com/file/d/1uTLiB5-WnfX46PizrnQ8diU
 
 Training plots (so far) [plots](https://drive.google.com/drive/u/1/folders/1gdQa4xsLskdbwLzw-eEMvRDNMisXal8U) 
 
-Sample outputs (so far) [samples] (https://drive.google.com/drive/folders/187_QWBnjrfnl_LaRfgcETFuvWPyGMO6S?usp=drive_link)
+Sample outputs (so far) [samples](https://drive.google.com/drive/folders/187_QWBnjrfnl_LaRfgcETFuvWPyGMO6S?usp=drive_link)
 the output is an interactive map 
