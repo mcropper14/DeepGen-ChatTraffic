@@ -138,9 +138,6 @@ def PlotLineOnMap(data, roads, path, dimension):
     # normed_data = (data[:,dimension] - data[:, dimension].min()) / (data[:, dimension].max() - data[:, dimension].min())
     # normed_data = (data[:,dimension])
     normed_data = data
-    # normed_data = QuantileTransformer().fit_transform(data[:,dimension].reshape(-1, 1))
-    # print(data)
-    print(normed_data)
     for i, road_list in enumerate(roads):
         for section in road_list:
             folium.PolyLine(section, color=value_to_color(normed_data[i], dimension), weight=5).add_to(san_map)
@@ -151,25 +148,38 @@ def PlotLineOnMap(data, roads, path, dimension):
         #     folium.Marker([lat, lon], color='red').add_to(marker_cluster)
     san_map.save(path)
 
-#绘制地图
+if __name__ == '__main__':
+    import argparse, os
 
-x36 = np.load('./datasets/traffic/validation/data/XXXX.npy')
+    parser = argparse.ArgumentParser(description="Visualise a traffic .npy file on an interactive map.")
+    parser.add_argument('npy_file', help="Path to a (36,36,3) .npy prediction or ground-truth file")
+    parser.add_argument('--dimension', type=int, default=1, choices=[0, 1],
+                        help="Channel to visualise: 0=congestion (0-5, normalised), 1=speed (km/h, normalised). Default: 1")
+    parser.add_argument('--roads', default='./datasets/traffic/Roads1260.json',
+                        help="Path to Roads1260.json")
+    parser.add_argument('--outdir', default='./outputs/Map',
+                        help="Output directory for the HTML map")
+    args = parser.parse_args()
 
-r36 = restore_matrix(x36)
+    x36 = np.load(args.npy_file)
+    r36 = restore_matrix(x36)           # (1260, 3), values in [0,1]
+    road_values = r36[:, args.dimension] # (1260,)  scalar per road segment
 
-road_data = json.load(open('./datasets/traffic/Roads1260.json'))
-roads = []
-for road in road_data:
-    roads.append([])
-    for section in road:
-        roads[-1].append([])
-        coordList = section['coordList']
-        for i in range(0, len(coordList), 2):
-            # print((coordList[i+1], coordList[i]))
-            wgs_lon, wgs_alt = gcj2WGS(coordList[i+1], coordList[i])
-            # print(wgs_lon, wgs_alt)
-            roads[-1][-1].append((wgs_lon, wgs_alt))
-# print(len(roads[0]))
-dimension = 1
+    road_data = json.load(open(args.roads))
+    roads = []
+    for road in road_data:
+        roads.append([])
+        for section in road:
+            roads[-1].append([])
+            coordList = section['coordList']
+            for i in range(0, len(coordList), 2):
+                wgs_lon, wgs_alt = gcj2WGS(coordList[i+1], coordList[i])
+                roads[-1][-1].append((wgs_lon, wgs_alt))
 
-PlotLineOnMap(r36, roads, f'./outputs/Map/Map{dimension}.html', dimension)
+    os.makedirs(args.outdir, exist_ok=True)
+    dim_name = {0: 'congestion', 1: 'speed'}[args.dimension]
+    stem = os.path.splitext(os.path.basename(args.npy_file))[0]
+    out_path = os.path.join(args.outdir, f'{stem}_{dim_name}.html')
+
+    PlotLineOnMap(road_values, roads, out_path, args.dimension)
+    print(f"Map saved to {out_path}")
