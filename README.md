@@ -12,3 +12,9 @@ Training plots [plots](https://drive.google.com/drive/u/1/folders/1gdQa4xsLskdbw
 
 Sample outputs  [samples](https://drive.google.com/drive/folders/187_QWBnjrfnl_LaRfgcETFuvWPyGMO6S?usp=drive_link)
 the output is an interactive map 
+
+Our flow matching implementation can be found at: /ldm/models/flow_matching.py 
+
+The evaluation can be found at: scripts/evaluate.py
+
+The temporal data generation can be found at: scripts/sequence_generation.py
