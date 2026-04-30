@@ -18,3 +18,5 @@ Our flow matching implementation can be found at: /ldm/models/flow_matching.py
 The evaluation can be found at: scripts/evaluate.py
 
 The temporal data generation can be found at: scripts/sequence_generation.py
+
+Training can be run via: ``` CUDA_VISIBLE_DEVICES=<GPU_ID> python main.py --base configs/latent-diffusion/traffic.yaml -t --gpus 0, ```
